@@ -3,7 +3,7 @@
 The source code of NTU-AMMAI-CDFSL.
 
 ### Datasets
-   * mini-ImageNet: 
+   * mini-ImageNet: https://drive.google.com/file/d/1zGGCKzspL0GSZhiDEp8rpVnB4i-jL2k_/view?usp=sharing
    * EuroSAT: https://drive.google.com/file/d/1DUj510w7726Iga34gmmhLA4meVYULrBe/view?usp=sharing
    * ISIC: https://drive.google.com/file/d/15jXP_rDEi_eusIK-kCz-DD5ZBFD3WeGF/view?usp=sharing
 
