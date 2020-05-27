@@ -26,6 +26,7 @@ The source code of NTU-AMMAI-CDFSL.
 
 ### Environment
    Python 3.7
+   
    Pytorch 1.3.1
 
 ### Steps
@@ -38,6 +39,7 @@ The source code of NTU-AMMAI-CDFSL.
            python ./train.py --dataset miniImageNet --model ResNet10  --method baseline --train_aug
        ```
    - **Train meta-learning method (protonet) on miniImageNet**
+   
    The available method list: [protonet]
 
        ```bash
@@ -96,7 +98,7 @@ The source code of NTU-AMMAI-CDFSL.
 
 For miniImageNet, the accuracies are inconsistency with previous work's results. We are still looking for the reason.
 
-For EuroSAT and ISIC, the result w/ and w/o fine-tuning are the first and second accuracy, respectively.
+For EuroSAT and ISIC, the result w/o and w/ fine-tuning are the first and second accuracy, respectively.
 
 ### TODOs
    1. Try to re-run all baseline models for both tracks. 
