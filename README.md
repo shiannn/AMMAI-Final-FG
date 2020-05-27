@@ -40,7 +40,7 @@ The source code of NTU-AMMAI-CDFSL.
        ```
    - **Train meta-learning method (protonet) on miniImageNet**
    
-   The available method list: [protonet]
+       The available method list: [protonet]
 
        ```bash
            python ./train.py --dataset miniImageNet --model ResNet10  --method protonet --n_shot 5 --train_aug
