@@ -59,31 +59,33 @@ The source code of NTU-AMMAI-CDFSL.
       There are two meta-test files:
 
       * **meta_test_Baseline.py**:
-      - For Baseline, we will train a new linear classifier using support set.
+      
+        For Baseline, we will train a new linear classifier using support set.
 
-       ```bash
-           python meta_test_Baseline.py --track cdfsl --model ResNet10 --method baseline  --train_aug --freeze_backbone
-       ```
-      - You can also train a new linear layer and fine-tune the backbone.
+        ```bash
+            python meta_test_Baseline.py --track cdfsl --model ResNet10 --method baseline  --train_aug --freeze_backbone
+        ```
+         You can also train a new linear layer and fine-tune the backbone.
 
-       ```bash
-           python meta_test_Baseline.py --track cdfsl --model ResNet10 --method baseline  --train_aug
-       ```
+        ```bash
+            python meta_test_Baseline.py --track cdfsl --model ResNet10 --method baseline  --train_aug
+        ```
 
-     * **meta_test_few_shot_models.py**:
-     This method will apply the pseudo query set to the few-shot model you want to fine-tune with. (if add --freeze_backbone)
+      * **meta_test_few_shot_models.py**:
+      
+        This method will apply the pseudo query set to the few-shot model you want to fine-tune with. (if add --freeze_backbone)
 
-     The available method list: [protonet]
+        The available method list: [protonet]
 
-     The available model list: [ResNet10/ResNet18]
+        The available model list: [ResNet10]
+        
+        ```bash
+            python meta_test_few_shot_models.py --track cdfsl --model ResNet10 --method protonet  --train_aug
+        ```
 
-    ```bash
-        python meta_test_few_shot_models.py --track cdfsl --model ResNet10 --method protonet  --train_aug --freeze_backbone
-    ```
+   No matter which finetune method you chosse, a dataset contains 600 tasks.
 
-    No matter which finetune method you chosse, a dataset contains 600 tasks.
-
-    After evaluating 600 times, you will see the result like this: 600 Test Acc = 49.91% +- 0.44%.
+   After evaluating 600 times, you will see the result like this: 600 Test Acc = 49.91% +- 0.44%.
 
 ### Results
 
@@ -93,6 +95,7 @@ The source code of NTU-AMMAI-CDFSL.
 | ProtoNet | 66.33% ± 0.65%* | 77.45% ± 0.56% / 81.45% ± 0.63% | 41.73% ± 0.56% / 46.72% ± 0.59% |
 
 For miniImageNet, the accuracies are inconsistency with previous work's results. We are still looking for the reason.
+
 For EuroSAT and ISIC, the result w/ and w/o fine-tuning are the first and second accuracy, respectively.
 
 ### TODOs
