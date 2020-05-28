@@ -131,6 +131,7 @@ For EuroSAT and ISIC, the result w/o and w/ fine-tuning are the first and second
            python meta_test_few_shot_models.py --track cdfsl --model ResNet10 --method your_method  --train_aug
       ```
 
+      - Hint: large margin methods or feature generalization methods may be helpful to solve the problem.
 ### Contact Information
    H.T. Su (d06944009@ntu.edu.tw)
 
