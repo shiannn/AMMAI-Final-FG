@@ -121,7 +121,7 @@ def meta_test(novel_loader, n_query = 15, pretrained_dataset='miniImageNet', fre
 if __name__=='__main__':
     np.random.seed(10)
     params = parse_args('train')
-    track = params.track
+    task = params.task
 
     ##################################################################
     image_size = 224
@@ -140,7 +140,7 @@ if __name__=='__main__':
     dataset_names = ["EuroSAT", "ISIC"]
 
     novel_loaders = []
-    if track == 'fsl':
+    if task == 'fsl':
         freeze_backbone = True
 
         dataset_names = ["miniImageNet"]

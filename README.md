@@ -48,7 +48,7 @@ The source code of NTU-AMMAI-CDFSL.
    4. Test
       You should know the following options:
 
-      • --track: fsl/cdfsl, option for track 1(fsl) or track 2(cdfsl).
+      • --task: fsl/cdfsl, option for task 1(fsl) or task 2(cdfsl).
 
       • --model: ResNet10, network architecture.
 
@@ -56,7 +56,7 @@ The source code of NTU-AMMAI-CDFSL.
 
       • --train_aug: add this if you train the model with this option.
 
-      • --freeze_backbone: add this for inferring directly. (Do not add this if you want to fine-tune your model, you can only fine-tune models in track 2.)
+      • --freeze_backbone: add this for inferring directly. (Do not add this if you want to fine-tune your model, you can only fine-tune models in task 2.)
 
       There are two meta-test files:
 
@@ -65,12 +65,12 @@ The source code of NTU-AMMAI-CDFSL.
         For Baseline, we will train a new linear classifier using support set.
 
         ```bash
-            python meta_test_Baseline.py --track cdfsl --model ResNet10 --method baseline  --train_aug --freeze_backbone
+            python meta_test_Baseline.py --task cdfsl --model ResNet10 --method baseline  --train_aug --freeze_backbone
         ```
          You can also train a new linear layer and fine-tune the backbone.
 
         ```bash
-            python meta_test_Baseline.py --track cdfsl --model ResNet10 --method baseline  --train_aug
+            python meta_test_Baseline.py --task cdfsl --model ResNet10 --method baseline  --train_aug
         ```
 
       * **meta_test_few_shot_models.py**:
@@ -82,7 +82,7 @@ The source code of NTU-AMMAI-CDFSL.
         The available model list: [ResNet10]
         
         ```bash
-            python meta_test_few_shot_models.py --track cdfsl --model ResNet10 --method protonet  --train_aug
+            python meta_test_few_shot_models.py --task cdfsl --model ResNet10 --method protonet  --train_aug
         ```
 
    No matter which finetune method you chosse, a dataset contains 600 tasks.
@@ -101,34 +101,34 @@ For miniImageNet, the accuracies are inconsistency with previous work's results.
 For EuroSAT and ISIC, the result w/o and w/ fine-tuning are the first and second accuracy, respectively.
 
 ### TODOs
-   1. Try to re-run all baseline models for both tracks. 
+   1. Try to re-run all baseline models for both tasks. 
 
       ```bash
-           python meta_test_Baseline.py --track fsl --model ResNet10 --method baseline  --train_aug --freeze_backbone
+           python meta_test_Baseline.py --task fsl --model ResNet10 --method baseline  --train_aug --freeze_backbone
       ```
 
       ```bash
-           python meta_test_Baseline.py --track cdfsl --model ResNet10 --method baseline  --train_aug 
+           python meta_test_Baseline.py --task cdfsl --model ResNet10 --method baseline  --train_aug 
       ```
 
       ```bash
-           python meta_test_few_shot_models.py --track fsl --model ResNet10 --method protonet  --train_aug --freeze_backbone
+           python meta_test_few_shot_models.py --task fsl --model ResNet10 --method protonet  --train_aug --freeze_backbone
       ```
 
       ```bash
-           python meta_test_few_shot_models.py --track cdfsl --model ResNet10 --method protonet  --train_aug
+           python meta_test_few_shot_models.py --task cdfsl --model ResNet10 --method protonet  --train_aug
       ```
 
-   2. Design your own model, and report your results for both tracks.
+   2. Design your own model, and report your results for both tasks.
       - You should inherit the template in meta_template.py, and design your own model.
-      - For track 2, you can infer the query set directly, or you can also design your fine-tuning method (You can stil use pseudo query set to fine-tune).
+      - For task 2, you can infer the query set directly, or you can also design your fine-tuning method (You can stil use pseudo query set to fine-tune).
 
        ```bash
-           python meta_test_few_shot_models.py --track fsl --model ResNet10 --method your_method  --train_aug --freeze_backbone
+           python meta_test_few_shot_models.py --task fsl --model ResNet10 --method your_method  --train_aug --freeze_backbone
       ```
 
       ```bash
-           python meta_test_few_shot_models.py --track cdfsl --model ResNet10 --method your_method  --train_aug
+           python meta_test_few_shot_models.py --task cdfsl --model ResNet10 --method your_method  --train_aug
       ```
 
       - Hint: large margin methods or feature generalization methods may be helpful to solve the problem.
