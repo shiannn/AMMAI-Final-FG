@@ -93,10 +93,8 @@ The source code of NTU-AMMAI-CDFSL.
 
 | Models  | miniImageNet | EuroSAT | ISIC |
 | ------------- | ------------- | ------------- | ------------- |
-| Baseline | 68.10% ± 0.67%* | 75.69% ± 0.66% / 79.08% ± 0.61% | 43.56% ± 0.60% / 48.11% ± 0.64% | 
-| ProtoNet | 66.33% ± 0.65%* | 77.45% ± 0.56% / 81.45% ± 0.63% | 41.73% ± 0.56% / 46.72% ± 0.59% |
-
-For miniImageNet, the accuracies are inconsistency with previous work's results. We are still looking for the reason.
+| Baseline | 68.10% ± 0.67% | 75.69% ± 0.66% / 79.08% ± 0.61% | 43.56% ± 0.60% / 48.11% ± 0.64% | 
+| ProtoNet | 66.33% ± 0.65% | 77.45% ± 0.56% / 81.45% ± 0.63% | 41.73% ± 0.56% / 46.72% ± 0.59% |
 
 For EuroSAT and ISIC, the result w/o and w/ fine-tuning are the first and second accuracy, respectively.
 
