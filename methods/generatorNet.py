@@ -16,16 +16,49 @@ class GeneratorNet(nn.Module):
         #print('B1.shape', B1.shape)
         #print('B2.shape', B2.shape)
         #print('A.shape', A.shape)
+        origin_feature = A
+        ways_nums = A.shape[0]
+        shot_nums = A.shape[1]
+        gen_nums = B1.shape[0]
+        # clone B1 B2
+        B1 = B1.expand(ways_nums, B1.shape[0], B1.shape[1])
+        B2 = B2.expand(ways_nums, B2.shape[0], B2.shape[1])
+        #print('after expand B1.shape', B1.shape)
+        #print('after expand B2.shape', B2.shape)
+        B1 = B1.repeat(1,shot_nums,1)
+        B2 = B2.repeat(1,shot_nums,1)
+        A = A.repeat_interleave(gen_nums, dim=1)
+        #print('after repeat B1.shape', B1.shape)
+        #print('after repeat B2.shape', B2.shape)
+        #print('after repeat A.shape', A.shape)
         add_info = self.add_info(A, B1, B2)
+        #print('after add_info', add_info.shape)
         A_rebuild = self.generator(add_info)
-        A_rebuild = self.l2_norm(A_rebuild)
+        #print('after A_rebuild', A_rebuild.shape)
+        A_rebuild = self.l2_norm_3D(A_rebuild)
+        #print('A_rebuild.shape',A_rebuild.shape)
         score = self.fc(A_rebuild*self.s)
+        #print('score.shape', score.shape)
+
         return A_rebuild, score
    
     def weight_norm(self):
         w = self.fc.weight.data
         norm = w.norm(p=2, dim=1, keepdim=True)
         self.fc.weight.data = w.div(norm.expand_as(w))
+
+    def l2_norm_3D(self, input):
+        input_size = input.size()
+        buffer = torch.pow(input, 2)
+
+        norm = torch.sum(buffer, 2).add_(1e-10)
+        norm = torch.sqrt(norm)
+
+        #print('norm.shape', norm.shape)
+        _output = torch.div(input, norm.view(norm.shape[0], norm.shape[1], 1).expand_as(input))
+        output = _output.view(input_size)
+
+        return output
 
     def l2_norm(self,input):
         input_size = input.size()

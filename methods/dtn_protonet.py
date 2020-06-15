@@ -81,7 +81,7 @@ class DTN_ProtoNet(MetaTemplate):
                 #print(optimizer.state_dict()['param_groups'][0]['lr'])
                 print('Epoch {:d} | Batch {:d}/{:d} | Loss {:f}'.format(epoch, idx, len(train_loader), avg_loss/float(idx+1)))
             
-            break
+            #break
 
 
     def set_forward(self,x, generated_support_1, generated_support_2, is_feature = False):
@@ -95,6 +95,10 @@ class DTN_ProtoNet(MetaTemplate):
         # 6, 512 => 6 classes of generation 1
         # 6, 512 => 6 classes of generation 2
 
+        gen_feature, _ = self.model_G(gen_support_1, gen_support_2, z_support)
+        features = torch.cat((gen_feature, z_support), 1)
+        weight = torch.mean(features, 1)
+        """
         weight = torch.zeros((self.n_way, self.dim), requires_grad=True).cuda()
         for i in range(self.n_way):
             weight_point = torch.zeros((self.n_support)*(self.gen_num+1), self.dim)
@@ -104,6 +108,7 @@ class DTN_ProtoNet(MetaTemplate):
                 weight_point[j*(self.gen_num+1):(j+1)*(self.gen_num+1)] = features
                 #print(gen_feature.shape)
             weight[i] = torch.mean(weight_point, 0)
+        """
         
         #print(weight)
         weight = self.model_G.l2_norm(weight)
