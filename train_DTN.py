@@ -18,7 +18,7 @@ from methods.dtn_protonet import DTN_ProtoNet
 from io_utils import model_dict, parse_args, get_resume_file  
 from datasets import miniImageNet_few_shot_DTN
 
-def train_DTN(base_loader, val_loader, gen_loader, model, optimization, start_epoch, stop_epoch, params):    
+def train_DTN(base_loader, val_loader, gen_loader, val_gen_loader, model, optimization, start_epoch, stop_epoch, params):    
     if optimization == 'Adam':
         optimizer = torch.optim.Adam(model.parameters())
     else:
@@ -32,7 +32,7 @@ def train_DTN(base_loader, val_loader, gen_loader, model, optimization, start_ep
         if not os.path.isdir(params.checkpoint_dir):
             os.makedirs(params.checkpoint_dir)
 
-        acc = model.test_loop( val_loader)
+        acc = model.test_loop( val_loader, val_gen_loader)
         if acc > max_acc : #for baseline and baseline++, we don't use validation in default and we let acc = -1, but we allow options to validate with DB index
             print("best model! save...")
             max_acc = acc
@@ -94,8 +94,9 @@ if __name__=='__main__':
             base_loader        = datamgr.get_data_loader(aug = params.train_aug)
             gen_loader         = datamgr.get_generation_loader(aug = params.train_aug)
 
-            val_datamgr        = miniImageNet_few_shot_DTN.SetDataManager(image_size, n_query = n_query, mode="val",  **test_few_shot_params)
+            val_datamgr        = miniImageNet_few_shot_DTN.SetDataManager_DTN(image_size, n_query = n_query, mode="val",  **test_few_shot_params)
             val_loader         = val_datamgr.get_data_loader(aug = False)
+            val_gen_loader     = val_datamgr.get_generation_loader(aug = False)
         else:
            raise ValueError('Unknown dataset')
         
@@ -123,4 +124,4 @@ if __name__=='__main__':
     stop_epoch = params.stop_epoch
 
     #model = train(base_loader, val_loader, model, optimization, start_epoch, stop_epoch, params)
-    model = train_DTN(base_loader, val_loader, gen_loader, model, optimization, start_epoch, stop_epoch, params)
+    model = train_DTN(base_loader, val_loader, gen_loader, val_gen_loader, model, optimization, start_epoch, stop_epoch, params)

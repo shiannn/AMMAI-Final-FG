@@ -226,6 +226,49 @@ class SetDataManager(DataManager):
         data_loader = torch.utils.data.DataLoader(dataset, **data_loader_params)
         return data_loader
 
+class EpisodicBatchSampler_gen(object):
+    def __init__(self, n_classes, n_way, n_episodes):
+        self.n_classes = n_classes
+        self.n_way = n_way
+        self.n_episodes = n_episodes
+
+    def __len__(self):
+        return self.n_episodes
+
+    def __iter__(self):
+        for i in range(self.n_episodes):
+            yield torch.randperm(self.n_classes)[:self.n_way]
+
+class SetDataManager_DTN(DataManager):
+    def __init__(self, image_size, n_way=5, n_gen_pairs=6, n_support=5, n_query=16, n_eposide = 100):        
+        super(SetDataManager_DTN, self).__init__()
+        self.image_size = image_size
+        self.n_way = n_way
+        self.n_gen_pairs = n_gen_pairs
+
+        self.batch_size = n_support + n_query
+        self.n_eposide = n_eposide
+
+        self.trans_loader = TransformLoader(image_size)
+        self.PAIR = 2
+
+    def get_data_loader(self, aug): #parameters that would change on train/val set
+        transform = self.trans_loader.get_composed_transform(aug)
+        dataset = SetDataset(self.batch_size, transform)
+        sampler = EpisodicBatchSampler(len(dataset), self.n_way, self.n_eposide )  
+        data_loader_params = dict(batch_sampler = sampler,  num_workers = 0, pin_memory = True)       
+        data_loader = torch.utils.data.DataLoader(dataset, **data_loader_params)
+        return data_loader
+    
+    def get_generation_loader(self, aug):
+        transform = self.trans_loader.get_composed_transform(aug)
+        dataset = SetDataset(self.PAIR, transform)
+        generate_sampler = EpisodicBatchSampler_gen(len(dataset), self.n_gen_pairs, self.n_eposide )
+
+        generation_loader_params = dict(batch_sampler = generate_sampler,  num_workers = 0, pin_memory = True)
+        generation_loader = torch.utils.data.DataLoader(dataset, **generation_loader_params)
+        return generation_loader
+
 if __name__ == '__main__':
 
     train_few_shot_params   = dict(n_way = 5, n_support = 5) 

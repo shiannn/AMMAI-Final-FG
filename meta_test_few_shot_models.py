@@ -15,25 +15,36 @@ import backbone
 from data.datamgr import SimpleDataManager, SetDataManager
 from methods.protonet import ProtoNet
 
+from methods.dtn_protonet import DTN_ProtoNet
+
 from io_utils import model_dict, parse_args, get_resume_file, get_best_file, get_assigned_file 
 from utils import *
-from datasets import miniImageNet_few_shot, EuroSAT_few_shot, ISIC_few_shot
+from datasets import miniImageNet_few_shot_DTN, EuroSAT_few_shot, ISIC_few_shot
 
 from pseudo_query_generator import PseudoQeuryGenerator
 
-def meta_test(novel_loader, n_query = 15, pretrained_dataset='miniImageNet', freeze_backbone=False, n_pseudo=100, n_way = 5, n_support = 5): 
+def meta_test(novel_loader, novel_gen_loader, n_query = 15, pretrained_dataset='miniImageNet', freeze_backbone=False, n_pseudo=100, n_way = 5, n_support = 5): 
     correct = 0
     count = 0
 
     iter_num = len(novel_loader) 
 
     acc_all = []
-    for ti, (x, y) in enumerate(novel_loader):
+    for ti, ZIP in enumerate(zip(novel_loader, novel_gen_loader)):
+        train_data, gen_data = ZIP
+        x, y = train_data
+        gen_x, gen_label = gen_data
+
+        generated_support_1 = gen_x[:,0,:,:,:]
+        generated_support_2 = gen_x[:,1,:,:,:]
 
         ###############################################################################################
         # load pretrained model on miniImageNet
         if params.method == 'protonet':
             pretrained_model = ProtoNet(model_dict[params.model], n_way = n_way, n_support = n_support)
+        elif params.method == 'dtn':
+            print('use dtn')
+            pretrained_model = DTN_ProtoNet(model_dict[params.model], n_way = n_way, n_support = n_support)
 
 
         checkpoint_dir = '%s/checkpoints/%s/%s_%s' %(configs.save_dir, pretrained_dataset, params.model, params.method)
@@ -90,7 +101,7 @@ def meta_test(novel_loader, n_query = 15, pretrained_dataset='miniImageNet', fre
 
                 x = torch.cat((z_support, psedo_query_set), dim=1)
  
-                loss = pretrained_model.set_forward_loss(x)
+                loss = pretrained_model.set_forward_loss(x, generated_support_1, generated_support_2)
                 loss.backward()
                 delta_opt.step()
 
@@ -101,7 +112,7 @@ def meta_test(novel_loader, n_query = 15, pretrained_dataset='miniImageNet', fre
         
         pretrained_model.n_query = n_query
         with torch.no_grad():
-            scores = pretrained_model.set_forward(x_var.cuda())
+            scores = pretrained_model.set_forward(x_var.cuda(), generated_support_1, generated_support_2)
         
         y_query = np.repeat(range( n_way ), n_query )
         topk_scores, topk_labels = scores.data.topk(1, 1, True, True)
@@ -140,28 +151,39 @@ if __name__=='__main__':
     dataset_names = ["EuroSAT", "ISIC"]
 
     novel_loaders = []
+
+    novel_gen_loaders = []
     if task == 'fsl':
         freeze_backbone = True
 
         dataset_names = ["miniImageNet"]
         print ("Loading mini-ImageNet")
-        datamgr             =  miniImageNet_few_shot.SetDataManager(image_size, n_eposide = iter_num, n_query = 15, mode="test", **few_shot_params)
+        datamgr             =  miniImageNet_few_shot_DTN.SetDataManager_DTN(image_size, n_eposide = iter_num, n_query = 15, mode="test", **few_shot_params)
         novel_loader        = datamgr.get_data_loader(aug =False)
         novel_loaders.append(novel_loader)
+
+        novel_gen_loader    = datamgr.get_generation_loader(aug = False)
+        novel_gen_loaders.append(novel_gen_loader)
     else:
         freeze_backbone = params.freeze_backbone
 
         dataset_names = ["EuroSAT", "ISIC"]
 
         print ("Loading EuroSAT")
-        datamgr             =  EuroSAT_few_shot.SetDataManager(image_size, n_eposide = iter_num, n_query = 15, **few_shot_params)
+        datamgr             =  EuroSAT_few_shot.SetDataManager_DTN(image_size, n_eposide = iter_num, n_query = 15, **few_shot_params)
         novel_loader        = datamgr.get_data_loader(aug =False)
         novel_loaders.append(novel_loader)
 
+        novel_gen_loader    = datamgr.get_generation_loader(aug = False)
+        novel_gen_loaders.append(novel_gen_loader)
+
         print ("Loading ISIC")
-        datamgr             =  ISIC_few_shot.SetDataManager(image_size, n_eposide = iter_num, n_query = 15, **few_shot_params)
+        datamgr             =  ISIC_few_shot.SetDataManager_DTN(image_size, n_eposide = iter_num, n_query = 15, **few_shot_params)
         novel_loader        = datamgr.get_data_loader(aug =False)
         novel_loaders.append(novel_loader)
+
+        novel_gen_loader    = datamgr.get_generation_loader(aug = False)
+        novel_gen_loaders.append(novel_gen_loader)
 
     print('fine-tune: ', not freeze_backbone)
     if not freeze_backbone:
@@ -169,9 +191,11 @@ if __name__=='__main__':
 
     #########################################################################
     # meta-test loop
-    for idx, novel_loader in enumerate(novel_loaders):
+    for idx, All_loader in enumerate(zip(novel_loaders, novel_gen_loaders)):
+        novel_loader, novel_gen_loader = All_loader
+
         print (dataset_names[idx])
         start_epoch = params.start_epoch
         stop_epoch = params.stop_epoch
       
-        meta_test(novel_loader, n_query = 15, pretrained_dataset=pretrained_dataset, freeze_backbone=freeze_backbone, n_pseudo=n_pseudo, **few_shot_params)
+        meta_test(novel_loader, novel_gen_loader, n_query = 15, pretrained_dataset=pretrained_dataset, freeze_backbone=freeze_backbone, n_pseudo=n_pseudo, **few_shot_params)
