@@ -10,6 +10,9 @@
 -  Vectorize computing classifiers from support samples
 -  Extra dataloader for referenced images
 
+### Result
+![](compare.png)
+
 # NTU-AMMAI-CDFSL
 
 The source code of NTU-AMMAI-CDFSL.
