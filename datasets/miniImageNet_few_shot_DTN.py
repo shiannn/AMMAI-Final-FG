@@ -219,7 +219,7 @@ class SetDataManager_DTN(DataManager):
         dataset = SetDataset(self.batch_size, transform, self.mode)
         sampler = EpisodicBatchSampler(len(dataset), self.n_way, self.n_eposide )
         
-        data_loader_params = dict(batch_sampler = sampler,  num_workers = 0, pin_memory = True)       
+        data_loader_params = dict(batch_sampler = sampler,  num_workers = 0, pin_memory = False)       
         data_loader = torch.utils.data.DataLoader(dataset, **data_loader_params)
         return data_loader
     
@@ -228,7 +228,7 @@ class SetDataManager_DTN(DataManager):
         dataset = SetDataset(self.PAIR, transform, self.mode)
         generate_sampler = EpisodicBatchSampler_gen(len(dataset), self.n_gen_pairs, self.n_eposide )
 
-        generation_loader_params = dict(batch_sampler = generate_sampler,  num_workers = 0, pin_memory = True)
+        generation_loader_params = dict(batch_sampler = generate_sampler,  num_workers = 0, pin_memory = False)
         generation_loader = torch.utils.data.DataLoader(dataset, **generation_loader_params)
         return generation_loader
 

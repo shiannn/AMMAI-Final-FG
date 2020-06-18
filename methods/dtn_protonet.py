@@ -113,6 +113,8 @@ class DTN_ProtoNet(MetaTemplate):
         #print(weight)
         weight = self.model_G.l2_norm(weight)
         predict = torch.matmul(z_query, torch.transpose(weight,0,1))*self.model_G.s
+        ### 5, 16, 5
+        ### 5 ways, 16 shots, logits of each data belongs to each class
         predict = predict.view(-1, predict.shape[2])
 
         """

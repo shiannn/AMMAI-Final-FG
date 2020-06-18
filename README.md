@@ -1,3 +1,15 @@
+# Feature Generation Implementation on final project of AMMAI [NTU-AMMAI-CDFSL]
+### Referenced
+-  Paper on AAAI 2019
+   -  Chen, Mengting, et al. "Diversity Transfer Network for Few-Shot Learning." arXiv preprint arXiv:1912.13182 (2019).
+
+-  Code released by authors:
+   -  https://github.com/Yuxin-CV/DTN
+
+### mainly modified on the NTU project
+-  Vectorize computing classifiers from support samples
+-  Extra dataloader for referenced images
+
 # NTU-AMMAI-CDFSL
 
 The source code of NTU-AMMAI-CDFSL.

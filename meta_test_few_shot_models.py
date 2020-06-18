@@ -7,6 +7,7 @@ import torch.nn.functional as F
 import torch.optim.lr_scheduler as lr_scheduler
 import time
 import os
+os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 import glob
 from itertools import combinations
 
@@ -53,6 +54,7 @@ def meta_test(novel_loader, novel_gen_loader, n_query = 15, pretrained_dataset='
         checkpoint_dir += '_5way_5shot'
 
         params.save_iter = -1
+        #params.save_iter = 200
         if params.save_iter != -1:
             modelfile   = get_assigned_file(checkpoint_dir, params.save_iter)
         else:
@@ -131,6 +133,7 @@ def meta_test(novel_loader, novel_gen_loader, n_query = 15, pretrained_dataset='
 
 if __name__=='__main__':
     np.random.seed(10)
+    torch.manual_seed(20)
     params = parse_args('train')
     task = params.task
 

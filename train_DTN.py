@@ -6,7 +6,7 @@ import torch.optim
 import torch.optim.lr_scheduler as lr_scheduler
 import time
 import os
-os.environ['CUDA_VISIBLE_DEVICES'] = '0'
+os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 import glob
 
 import configs
@@ -25,6 +25,7 @@ def train_DTN(base_loader, val_loader, gen_loader, val_gen_loader, model, optimi
        raise ValueError('Unknown optimization, please define by yourself')     
 
     max_acc = 0
+    print('in train')
     for epoch in range(start_epoch,stop_epoch):
         model.train()
         model.train_loop(epoch, base_loader, gen_loader, optimizer ) 
@@ -90,13 +91,16 @@ if __name__=='__main__':
         if params.dataset == "miniImageNet":
             print('dtn using miniImageNet')
             # n_gen_pairs ??
-            datamgr            = miniImageNet_few_shot_DTN.SetDataManager_DTN(image_size, n_query = n_query, mode="val",  **train_few_shot_params)
+            datamgr            = miniImageNet_few_shot_DTN.SetDataManager_DTN(image_size, n_query = n_query, mode="train",  **train_few_shot_params)
             base_loader        = datamgr.get_data_loader(aug = params.train_aug)
             gen_loader         = datamgr.get_generation_loader(aug = params.train_aug)
 
+            print('finish load train loader')
             val_datamgr        = miniImageNet_few_shot_DTN.SetDataManager_DTN(image_size, n_query = n_query, mode="val",  **test_few_shot_params)
             val_loader         = val_datamgr.get_data_loader(aug = False)
             val_gen_loader     = val_datamgr.get_generation_loader(aug = False)
+
+            print('finish load val loader')
         else:
            raise ValueError('Unknown dataset')
         
@@ -108,6 +112,7 @@ if __name__=='__main__':
        raise ValueError('Unknown method')
 
     model = model.cuda()
+    print('finish load model')
     save_dir =  configs.save_dir
 
     params.checkpoint_dir = '%s/checkpoints/%s/%s_%s' %(save_dir, params.dataset, params.model, params.method)
